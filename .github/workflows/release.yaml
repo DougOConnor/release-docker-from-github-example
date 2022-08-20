@@ -8,7 +8,6 @@ on:
 env:
   DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
   DOCKER_ACCESS_TOKEN: ${{ secrets.DOCKER_ACCESS_TOKEN }}
-  DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
   DOCKER_IMAGE_NAME: "release-from-github"
 
 jobs:
