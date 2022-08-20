@@ -1,0 +1,41 @@
+name: Release homeflix.io
+
+on:
+  push:
+    tags:
+      - '*'
+
+env:
+  DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+  DOCKER_ACCESS_TOKEN: ${{ secrets.DOCKER_ACCESS_TOKEN }}
+  DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+  DOCKER_IMAGE_NAME: "release-from-github"
+
+jobs:
+  build:
+    name: Build and Push
+    runs-on: ubuntu-latest
+    steps:
+      # Checkout your Repository From GitHub
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Get Tag
+        run: |
+          echo $GITHUB_REF_NAME
+          echo $GITHUB_REF
+      # Build the Docker image from your Dockerfile
+      - name: Build image
+        run: |
+          docker build -t homeflix.io .
+      # Tag the Docker Image with Semantic Version from your GitHub Release
+      # Tag the Docker Image with 'latest'
+      - name: Tag image
+        run: |
+          docker tag $DOCKER_IMAGE_NAME $DOCKER_USERNAME/$DOCKER_IMAGE_NAME:latest
+          docker tag $DOCKER_IMAGE_NAME $DOCKER_USERNAME/$DOCKER_IMAGE_NAME:$GITHUB_REF_NAME
+      # Login to Docker and push the image for each tag
+      - name: Push Image
+        run: |
+          docker login -u $DOCKER_USERNAME -p $DOCKER_ACCESS_TOKEN
+          docker push $DOCKER_USERNAME/$DOCKER_IMAGE_NAME:$GITHUB_REF_NAME
+          docker push $DOCKER_USERNAME/$DOCKER_IMAGE_NAME:latest
